@@ -183,6 +183,8 @@ class Widget extends \Magento\Catalog\Block\Product\AbstractProduct implements B
     protected function _getReportProductIds($period)
     {
         $aggregationPeriods = $this->getAggregationPeriods();
+        $objectManager    = \Magento\Framework\App\ObjectManager::getInstance();
+        $VisibleInSiteIds = $objectManager->create('\Magento\Catalog\Model\Product\Visibility')->getVisibleInSiteIds();
         $collection = $this->_bestsellersCollectionFactory->create()
             ->setPeriod(
                 $aggregationPeriods[$period]
@@ -190,7 +192,7 @@ class Widget extends \Magento\Catalog\Block\Product\AbstractProduct implements B
             ->addStoreFilter(
                 $this->_storeManager->getStore()->getId()
             );
-
+        $collection->setVisibility($VisibleInSiteIds);
         $intervals = $this->_getReportIntervals();
         if (isset($intervals[$period])) {
             $collection->setDateRange(
